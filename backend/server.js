@@ -10,14 +10,6 @@ import aiRoutes from "./routes/aiRoutes.js";
 dotenv.config();
 const app = express();
 
-// Check for required environment variables
-if (!process.env.MONGO_URI) {
-  console.error("❌ Error: MONGO_URI is not set in .env file");
-  console.error("Please create a .env file in the backend folder with:");
-  console.error("MONGO_URI=your_mongodb_connection_string");
-  process.exit(1);
-}
-
 // Middleware
 app.use(express.json());
 app.use(cors({
@@ -25,20 +17,10 @@ app.use(cors({
   credentials: true,
 }));
 
-// Connect to MongoDB
-console.log("Connecting to MongoDB:", process.env.MONGO_URI);
-mongoose
-  .connect(process.env.MONGO_URI)
-  .then(() => console.log("✅ MongoDB connected"))
-  .catch((err) => {
-    console.error("❌ MongoDB connection failed:", err.message);
-    console.error("Make sure your IP is whitelisted in MongoDB Atlas and password is URL-encoded.");
-    process.exit(1);
-  });
-
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
-
+// Health check route for Render
+app.get('/api/health', (req, res) => {
+  res.status(200).json({ status: "OK", message: "Backend is running!" });
+});
 
 // Routes
 app.use("/api/auth", authRoutes);
@@ -62,23 +44,39 @@ app.use((req, res) => {
   res.status(404).json({ message: "Route not found" });
 });
 
-// Start server
+// PORT from Render or fallback
 const PORT = process.env.PORT || 5000;
-const server = app.listen(PORT, () => {
-  console.log(`✅ Server running on port ${PORT}`);
-});
 
-// Handle port already in use error gracefully
-server.on('error', (err) => {
-  if (err.code === 'EADDRINUSE') {
-    console.error(`❌ Port ${PORT} is already in use!`);
-    console.error('Solutions:');
-    console.error('1. Kill the process using this port:');
-    console.error('   Windows: netstat -ano | findstr :' + PORT);
-    console.error('   Then: taskkill /PID <PID> /F');
-    console.error('2. Or change PORT in .env file to a different port (e.g., 5001)');
+// Connect to MongoDB and start server
+async function startServer() {
+  if (!process.env.MONGO_URI) {
+    console.error("❌ Error: MONGO_URI is not set in .env file");
     process.exit(1);
-  } else {
-    throw err;
   }
-});
+
+  try {
+    console.log("Connecting to MongoDB:", process.env.MONGO_URI);
+    await mongoose.connect(process.env.MONGO_URI);
+    console.log("✅ MongoDB connected");
+
+    const server = app.listen(PORT, () => {
+      console.log(`✅ Server running on port ${PORT}`);
+    });
+
+    // Handle port errors gracefully
+    server.on('error', (err) => {
+      if (err.code === 'EADDRINUSE') {
+        console.error(`❌ Port ${PORT} is already in use!`);
+        process.exit(1);
+      } else {
+        throw err;
+      }
+    });
+
+  } catch (err) {
+    console.error("❌ MongoDB connection failed:", err.message);
+    process.exit(1);
+  }
+}
+
+startServer();
