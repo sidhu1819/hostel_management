@@ -1,5 +1,14 @@
 import axios from 'axios';
 
+const BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
+export async function getRooms() {
+  const response = await fetch(`${BASE_URL}/api/rooms`);
+  const data = await response.json();
+  return data;
+}
+
+
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
 
 axios.get(`${API_URL}/api/rooms`);
