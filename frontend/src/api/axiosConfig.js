@@ -1,22 +1,22 @@
-import axios from 'axios';
+import axios from "axios";
 
-// ====================== FIX 1: Correct API Base URL ======================
+// ====================== API BASE URL ======================
 const API_BASE_URL =
   import.meta.env.VITE_API_BASE_URL ||
-  'https://hostel-management-ht2a.onrender.com'; // backend URL (without trailing slash)
+  "https://hostel-management-ht2a.onrender.com"; // backend URL (NO trailing slash)
 
 // Create Axios instance
 const api = axios.create({
   baseURL: API_BASE_URL,
   headers: {
-    'Content-Type': 'application/json',
+    "Content-Type": "application/json",
   },
 });
 
 // ====================== JWT Token Interceptor ======================
 api.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem("token");
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -30,33 +30,59 @@ api.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
-      localStorage.removeItem('token');
-      localStorage.removeItem('user');
-      window.location.href = '/login';
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
+      window.location.href = "/login";
     }
     return Promise.reject(error);
   }
 );
 
-// ==================== Auth ====================
-export const login = (credentials) => api.post('/api/auth/login', credentials);
-export const register = (userData) => api.post('/api/auth/register', userData);
-export const getProfile = () => api.get('/api/auth/profile');
+// ====================== AUTH ======================
+export const login = (credentials) => api.post("/api/auth/login", credentials);
+export const register = (userData) => api.post("/api/auth/register", userData);
+export const getProfile = () => api.get("/api/auth/profile");
 
-// ==================== Rooms ====================
-export const getRooms = () => api.get('/api/rooms');
+// ====================== ROOMS ======================
+export const getRooms = () => api.get("/api/rooms");
 export const getRoom = (id) => api.get(`/api/rooms/${id}`);
-export const createRoom = (roomData) => api.post('/api/rooms', roomData);
-export const updateRoom = (id, roomData) => api.put(`/api/rooms/${id}`, roomData);
+export const createRoom = (data) => api.post("/api/rooms", data);
+export const updateRoom = (id, data) => api.put(`/api/rooms/${id}`, data);
 export const deleteRoom = (id) => api.delete(`/api/rooms/${id}`);
 
-// ==================== Tickets ====================
-export const createTicket = (ticketData) => api.post('/api/tickets', ticketData);
-export const getTickets = () => api.get('/api/tickets');
+// ====== Room Assignment (New) ======
+export const assignStudentToRoom = (roomId, studentId) =>
+  api.post(`/api/rooms/${roomId}/assign`, { studentId });
+
+export const removeStudentFromRoom = (roomId, studentId) =>
+  api.post(`/api/rooms/${roomId}/remove`, { studentId });
+
+// ====================== ROOM REQUESTS (NEW FULL MODULE) ======================
+
+// Student submits request
+export const requestRoom = (studentId) =>
+  api.post("/api/requests", { studentId });
+
+// Student gets their own request
+export const getMyRoomRequest = () => api.get("/api/requests/my");
+
+// Admin only — get all requests
+export const getAllRequests = () => api.get("/api/requests");
+
+// Admin approves request
+export const approveRequest = (id, roomId) =>
+  api.post(`/api/requests/${id}/approve`, { roomId });
+
+// Admin rejects request
+export const rejectRequest = (id) =>
+  api.post(`/api/requests/${id}/reject`);
+
+// ====================== TICKETS ======================
+export const createTicket = (data) => api.post("/api/tickets", data);
+export const getTickets = () => api.get("/api/tickets");
 export const getTicket = (id) => api.get(`/api/tickets/${id}`);
 
-// ==================== AI Chat ====================
-export const sendAIQuery = (data) => api.post('/api/ai/query', data);
+// ====================== AI CHAT ======================
+export const sendAIQuery = (data) => api.post("/api/ai/query", data);
 
-// Export Axios instance
 export default api;
