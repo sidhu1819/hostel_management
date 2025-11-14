@@ -86,3 +86,8 @@ export const getTicket = (id) => api.get(`/api/tickets/${id}`);
 export const sendAIQuery = (data) => api.post("/api/ai/query", data);
 
 export default api;
+
+export const createRequest = () => api.post("/api/requests");
+export const deleteRequest = (id) => api.delete(`/api/requests/${id}`);
+export const getAllRequests = () => api.get("/api/requests");
+
