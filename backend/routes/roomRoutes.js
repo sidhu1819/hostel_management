@@ -8,22 +8,49 @@ import {
   assignStudentToRoom,
   removeStudentFromRoom
 } from "../controllers/roomController.js";
-import { authenticate } from "../middleware/authMiddleware.js";
+
+import { authenticate, isAdmin } from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 
-// All routes require authentication
+/*
+---------------------------------------------
+ Public Route (No login)
+---------------------------------------------
+*/
+
+// Students can see available rooms before login
+router.get("/", getRooms);
+
+/*
+---------------------------------------------
+ Protected Routes (Login required)
+---------------------------------------------
+*/
+
+// Below routes require login
 router.use(authenticate);
 
-// CRUD operations
-router.get("/", getRooms);
+// Student + Admin: Get single room
 router.get("/:id", getRoomById);
-router.post("/", createRoom);
-router.put("/:id", updateRoom);
-router.delete("/:id", deleteRoom);
 
-// Student assignment operations
-router.post("/:id/assign", assignStudentToRoom);
-router.post("/:id/remove", removeStudentFromRoom);
+/*
+---------------------------------------------
+ Admin-Only Routes
+---------------------------------------------
+*/
+
+router.post("/", isAdmin, createRoom);
+router.put("/:id", isAdmin, updateRoom);
+router.delete("/:id", isAdmin, deleteRoom);
+
+/*
+---------------------------------------------
+ Student Assignment (Admin-only)
+---------------------------------------------
+*/
+
+router.post("/:id/assign", isAdmin, assignStudentToRoom);
+router.post("/:id/remove", isAdmin, removeStudentFromRoom);
 
 export default router;
