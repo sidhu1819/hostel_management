@@ -35,14 +35,12 @@ const RequestRoom = () => {
     setMessage('');
 
     try {
-      // POST request to create a room allocation request
       await api.post('/api/requests', {
         studentId: user.id,
         roomId: selectedRoom,
       });
       setMessage('Room request submitted successfully!');
       setSelectedRoom('');
-      // Optionally redirect to dashboard
       setTimeout(() => navigate('/dashboard'), 2000);
     } catch (err) {
       console.error(err);
@@ -56,9 +54,7 @@ const RequestRoom = () => {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold mb-6 text-gray-800">
-        Request a Room
-      </h1>
+      <h1 className="text-3xl font-bold mb-6 text-gray-800">Request a Room</h1>
 
       {message && (
         <div className="bg-green-100 text-green-700 px-4 py-3 rounded mb-4">
@@ -67,9 +63,7 @@ const RequestRoom = () => {
       )}
 
       <form onSubmit={handleSubmit} className="max-w-md mx-auto bg-white p-6 rounded-lg shadow-md">
-        <label className="block text-gray-700 text-sm font-bold mb-2">
-          Select Room
-        </label>
+        <label className="block text-gray-700 text-sm font-bold mb-2">Select Room</label>
         <select
           value={selectedRoom}
           onChange={(e) => setSelectedRoom(e.target.value)}
@@ -79,7 +73,7 @@ const RequestRoom = () => {
           <option value="">-- Choose a Room --</option>
           {rooms.map((room) => (
             <option key={room._id} value={room._id}>
-              {room.roomNumber} (Capacity: {room.capacity}, Occupants: {room.occupants.length})
+              Block {room.block} - Room {room.number} (Capacity: {room.capacity}, Occupants: {room.occupants.length})
             </option>
           ))}
         </select>
