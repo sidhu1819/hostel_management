@@ -6,6 +6,7 @@ import authRoutes from "./routes/authRoutes.js";
 import roomRoutes from "./routes/roomRoutes.js";
 import ticketRoutes from "./routes/ticketRoutes.js";
 import aiRoutes from "./routes/aiRoutes.js";
+import requestRoutes from "./routes/requestRoutes.js";
 
 dotenv.config();
 const app = express();
@@ -34,6 +35,8 @@ app.use("/api/auth", authRoutes);
 app.use("/api/rooms", roomRoutes);
 app.use("/api/tickets", ticketRoutes);
 app.use("/api/ai", aiRoutes);
+
+app.use("/api/requests", requestRoutes);
 
 // Default API message
 app.get("/", (req, res) => {
