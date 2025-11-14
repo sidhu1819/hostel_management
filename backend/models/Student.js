@@ -19,6 +19,9 @@ const studentSchema = new mongoose.Schema({
     type: Number,
     default: null
   }
+  ,
+  // Backwards-compatible roomNumber field used by older controllers
+  roomNumber: { type: String, default: null }
 });
 
 export default mongoose.model("Student", studentSchema);
