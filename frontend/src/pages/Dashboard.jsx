@@ -58,13 +58,18 @@ const Dashboard = () => {
       <h1 className="text-3xl font-bold mb-6 text-gray-800">
         Welcome, {user?.name}!
       </h1>
+
+      {/* Stats Section */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
         <div className="bg-white p-6 rounded-lg shadow-md">
           <h3 className="text-lg font-semibold text-gray-700 mb-2">
             Total Rooms
           </h3>
-          <p className="text-3xl font-bold text-blue-600">{stats.totalRooms}</p>
+          <p className="text-3xl font-bold text-blue-600">
+            {stats.totalRooms}
+          </p>
         </div>
+
         {user?.role === 'admin' ? (
           <div className="bg-white p-6 rounded-lg shadow-md">
             <h3 className="text-lg font-semibold text-gray-700 mb-2">
@@ -84,6 +89,7 @@ const Dashboard = () => {
             </p>
           </div>
         )}
+
         <div className="bg-white p-6 rounded-lg shadow-md">
           <h3 className="text-lg font-semibold text-gray-700 mb-2">Role</h3>
           <p className="text-3xl font-bold text-purple-600 capitalize">
@@ -91,7 +97,10 @@ const Dashboard = () => {
           </p>
         </div>
       </div>
+
+      {/* Navigation Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+
         <Link
           to="/rooms"
           className="bg-blue-600 text-white p-6 rounded-lg shadow-md hover:bg-blue-700 transition"
@@ -101,6 +110,7 @@ const Dashboard = () => {
             View and manage hostel rooms and assignments
           </p>
         </Link>
+
         <Link
           to="/tickets"
           className="bg-green-600 text-white p-6 rounded-lg shadow-md hover:bg-green-700 transition"
@@ -110,6 +120,7 @@ const Dashboard = () => {
             Create and manage tickets and complaints
           </p>
         </Link>
+
         <Link
           to="/ai"
           className="bg-purple-600 text-white p-6 rounded-lg shadow-md hover:bg-purple-700 transition"
@@ -119,10 +130,23 @@ const Dashboard = () => {
             Get help with hostel-related queries
           </p>
         </Link>
+
+        {/* NEW — Student Room Request Button */}
+        {user?.role === "student" && (
+          <Link
+            to="/request-room"
+            className="bg-yellow-500 text-white p-6 rounded-lg shadow-md hover:bg-yellow-600 transition"
+          >
+            <h2 className="text-xl font-bold mb-2">Request a Room</h2>
+            <p className="text-yellow-100">
+              Submit a request for room allocation
+            </p>
+          </Link>
+        )}
+
       </div>
     </div>
   );
 };
 
 export default Dashboard;
-
