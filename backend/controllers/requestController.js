@@ -64,3 +64,43 @@ export const rejectRequest = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+
+export const createRequest = async (req, res) => {
+  try {
+    const studentId = req.user.id; // from auth middleware
+    const existingRequest = await Request.findOne({ student: studentId, status: "Pending" });
+    if (existingRequest) return res.status(400).json({ message: "You already have a pending request" });
+
+    const request = new Request({ student: studentId, status: "Pending" });
+    await request.save();
+
+    res.status(201).json(request);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+export const deleteRequest = async (req, res) => {
+  try {
+    const studentId = req.user.id;
+    const request = await Request.findById(req.params.id);
+
+    if (!request) return res.status(404).json({ message: "Request not found" });
+    if (request.student.toString() !== studentId)
+      return res.status(403).json({ message: "Unauthorized" });
+
+    await request.remove();
+    res.json({ message: "Request canceled" });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+export const getRequests = async (req, res) => {
+  try {
+    const requests = await Request.find().populate("student", "name rollNumber");
+    res.json(requests);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
