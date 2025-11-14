@@ -3,7 +3,7 @@ import axios from "axios";
 // ====================== API BASE URL ======================
 const API_BASE_URL =
   import.meta.env.VITE_API_BASE_URL ||
-  "https://hostel-management-ht2a.onrender.com"; // backend URL (NO trailing slash)
+  "https://hostel-management-ht2a.onrender.com";
 
 // Create Axios instance
 const api = axios.create({
@@ -57,7 +57,7 @@ export const assignStudentToRoom = (roomId, studentId) =>
 export const removeStudentFromRoom = (roomId, studentId) =>
   api.post(`/api/rooms/${roomId}/remove`, { studentId });
 
-// ====================== ROOM REQUESTS (NEW FULL MODULE) ======================
+// ====================== ROOM REQUESTS ======================
 
 // Student submits request
 export const requestRoom = (studentId) =>
@@ -86,8 +86,3 @@ export const getTicket = (id) => api.get(`/api/tickets/${id}`);
 export const sendAIQuery = (data) => api.post("/api/ai/query", data);
 
 export default api;
-
-export const createRequest = () => api.post("/api/requests");
-export const deleteRequest = (id) => api.delete(`/api/requests/${id}`);
-export const getAllRequests = () => api.get("/api/requests");
-
